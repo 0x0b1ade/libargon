@@ -1,0 +1,9 @@
+.cache/
+.vs/
+.vscode/
+.xmake/
+build/
+argon_hash.h
+
+.DS_Store
+liargon.zip
