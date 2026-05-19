@@ -3,7 +3,7 @@ BasedOnStyle: LLVM
 UseTab: Never
 IndentWidth: 4
 TabWidth: 4
-ColumnLimit: 80
+ColumnLimit: 90
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: Consecutive
@@ -29,7 +29,7 @@ IncludeCategories:
     Priority: 1
   - Regex: '^<(winsock2|ws2tcpip)\.h>$'
     Priority: 2
-  - Regex: '^<windows\.h>$'
+  - Regex: '^<Windows\.h>$'
     Priority: 3
   - Regex: '^<(pathcch|psapi|shlobj|shellapi|dwmapi)\.h>$'
     Priority: 4
