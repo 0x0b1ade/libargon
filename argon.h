@@ -96,8 +96,8 @@ typedef uint8_t ArgonEnumCnt;
  */
 typedef struct
 {
-    const char **enums;
-    bool         case_sensitive;
+    const char *const *enums;
+    bool               case_sensitive;
 } ArgonEnumPlugin;
 
 typedef uint8_t ArgonArrLen;
