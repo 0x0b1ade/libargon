@@ -11,7 +11,7 @@
 
 #define ARGON_VERSION_MAJOR 1
 #define ARGON_VERSION_MINOR 0
-#define ARGON_VERSION_PATCH 2
+#define ARGON_VERSION_PATCH 3
 
 // User-defined
 #ifndef ARGON_ERRMSG_LEN
