@@ -32,8 +32,6 @@ typedef uint8_t ArgonFlags;
 #if defined(_WIN32) || defined(__CYGWIN__)
     #ifdef ARGON_BUILD_SHARED
         #define ARGON_API_ __declspec(dllexport)
-    #elif !defined(ARGON_IMPLS)
-        #define ARGON_API_ __declspec(dllimport)
     #else
         #define ARGON_API_
     #endif
@@ -275,18 +273,6 @@ ARGON_API_ ArgonResult argon_print_sub_table(const ArgonSub *ctx, FILE *ostream)
 #endif // ARGON_H
 
 #ifdef ARGON_IMPLS
-
-// 重置 ARGON_API_ 防止 MSVC C2491
-#if defined(_WIN32) || defined(__CYGWIN__)
-    #ifdef ARGON_API_
-        #undef ARGON_API_
-    #endif
-    #ifdef ARGON_BUILD_SHARED
-        #define ARGON_API_ __declspec(dllexport)
-    #else
-        #define ARGON_API_
-    #endif
-#endif
 
 #ifdef __cplusplus
 extern "C"
