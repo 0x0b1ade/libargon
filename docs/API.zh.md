@@ -9,12 +9,12 @@
 
 解析器上下文，持有所有选项定义和解析状态。
 
-| 字段      | 类型                     |  必填  | 说明                                  |
-| --------- | ------------------------ | :----: | ------------------------------------- |
-| `options` | `ArgonOption *`          | **是** | `ARGON_OPTION_SENTINEL` 终止的全局选项数组              |
+| 字段      | 类型                     |  必填  | 说明                                                 |
+| --------- | ------------------------ | :----: | ---------------------------------------------------- |
+| `options` | `ArgonOption *`          | **是** | `ARGON_OPTION_SENTINEL` 终止的全局选项数组           |
 | `subs`    | `ArgonSub *`             |   否   | `ARGON_SUB_SENTINEL` 终止的子程序数组；无则为 `NULL` |
-| `flags`   | `ArgonFlags`             |   否   | 行为标志位掩码                        |
-| `errmsg`  | `char[ARGON_ERRMSG_LEN]` |  出参  | 发生错误时填入诊断信息                |
+| `flags`   | `ArgonFlags`             |   否   | 行为标志位掩码                                       |
+| `errmsg`  | `char[ARGON_ERRMSG_LEN]` |  出参  | 发生错误时填入诊断信息                               |
 
 `options` 字段指向的选项数组被视为全局选项。全局选项和每个字程序内部的选项最多 `ARGON_OPTION_MAX_COUNT` 个；子程序最多 `ARGON_SUBCOMMAND_MAX_COUNT` 个。超出的部分会被直接无视。因此单个解析器上下文最多支持 `ARGON_OPTION_MAX_COUNT` $\times$ `ARGON_SUBCOMMAND_MAX_COUNT` 个选项，大多数情况下已足够使用。
 
@@ -56,11 +56,11 @@
 
 描述一个子程序。
 
-| 字段      | 类型            | 说明                                                   |
-| --------- | --------------- | ------------------------------------------------------ |
-| `name`    | `const char *`  | 子程序名（如 `"build"`）                               |
-| `alias`   | `char`          | 短别名（如 `'b'`）；无则 `'\0'`                        |
-| `desc`    | `const char *`  | 帮助输出中的人类可读描述                               |
+| 字段      | 类型            | 说明                                                                     |
+| --------- | --------------- | ------------------------------------------------------------------------ |
+| `name`    | `const char *`  | 子程序名（如 `"build"`）                                                 |
+| `alias`   | `char`          | 短别名（如 `'b'`）；无则 `'\0'`                                          |
+| `desc`    | `const char *`  | 帮助描述                                                                 |
 | `options` | `ArgonOption *` | `ARGON_OPTION_SENTINEL` 终止的选项数组；可直接指向全局选项数组以实现共享 |
 
 子程序数组必须以 `ARGON_SUB_SENTINEL` 终止作为哨兵。
@@ -171,7 +171,7 @@ ArgonResult argon_parse(Argon *ctx, char *const argv[]);
 
 ### `ARGON_ARGV(...)`
 
-通过可变参数在栈上构造一个 `NULL` 终止的 `char *[]`。`argv[0]` 自动设为 `""`（解析器忽略）。
+通过可变参数在栈上构造一个 `NULL` 终止的 `char *[]`。`argv[0]` 自动设为 `""`（解析器忽略）。受 `ARGON_PEDANTIC` 开关影响。
 
 ```c
 char *argv[] = ARGON_ARGV("--format", "jpg");
@@ -222,15 +222,17 @@ bool argon_option_is_parsed(const ArgonOption *opt);
 
 ## 常量
 
-| 名称                         | 可修改 | 说明                     |
-| ---------------------------- | :----: | ------------------------ |
-| `ARGON_VERSION_MAJOR`        |   —    | 主版本号                 |
-| `ARGON_VERSION_MINOR`        |   —    | 次版本号                 |
-| `ARGON_VERSION_PATCH`        |   —    | 修订版本号               |
-| `ARGON_ERRMSG_LEN`           |   ✓    | 错误信息缓冲区长度       |
-| `ARGON_OPTNAME_MAX_LEN`      |   ✓    | 选项全写名最大长度       |
-| `ARGON_ENUM_MAX_LEN`         |   ✓    | 枚举字符串最大长度       |
-| `ARGON_ENUM_MAX_COUNT`       |   —    | 单个选项枚举值的最大数量 |
-| `ARGON_ARRAY_MAX_LEN`        |   —    | 数组选项值的最大数量     |
-| `ARGON_OPTION_MAX_COUNT`     |   —    | 单个选项集的最大选项数   |
-| `ARGON_SUBCOMMAND_MAX_COUNT` |   —    | 子程序的最大数量         |
+| 名称                         | 可修改 | 说明                                                         |
+| ---------------------------- | :----: | ------------------------------------------------------------ |
+| `ARGON_IMPLS`                |   ✓    | 定义后引入实现代码；每个编译单元有且仅有一个源文件需定义此宏 |
+| `ARGON_PEDANTIC`             |   ✓    | 禁用所有非严格遵循标准 C 语言规范的功能                      |
+| `ARGON_VERSION_MAJOR`        |   —    | 主版本号                                                     |
+| `ARGON_VERSION_MINOR`        |   —    | 次版本号                                                     |
+| `ARGON_VERSION_PATCH`        |   —    | 修订版本号                                                   |
+| `ARGON_ERRMSG_LEN`           |   ✓    | 错误信息缓冲区长度                                           |
+| `ARGON_OPTNAME_MAX_LEN`      |   ✓    | 选项全写名最大长度                                           |
+| `ARGON_ENUM_MAX_LEN`         |   ✓    | 枚举字符串最大长度                                           |
+| `ARGON_ENUM_MAX_COUNT`       |   —    | 单个选项枚举值的最大数量                                     |
+| `ARGON_ARRAY_MAX_LEN`        |   —    | 数组选项值的最大数量                                         |
+| `ARGON_OPTION_MAX_COUNT`     |   —    | 单个选项集的最大选项数                                       |
+| `ARGON_SUBCOMMAND_MAX_COUNT` |   —    | 子程序的最大数量                                             |

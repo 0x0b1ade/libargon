@@ -9,12 +9,12 @@
 
 Parser context holding all option definitions and parser state.
 
-| Field     | Type                     | Required | Description                                           |
-| --------- | ------------------------ | :------: | ----------------------------------------------------- |
-| `options` | `ArgonOption *`          | **yes**  | `ARGON_OPTION_SENTINEL`-terminated array of global options              |
+| Field     | Type                     | Required | Description                                                          |
+| --------- | ------------------------ | :------: | -------------------------------------------------------------------- |
+| `options` | `ArgonOption *`          | **yes**  | `ARGON_OPTION_SENTINEL`-terminated array of global options           |
 | `subs`    | `ArgonSub *`             |    no    | `ARGON_SUB_SENTINEL`-terminated array of subcommands; `NULL` if none |
-| `flags`   | `ArgonFlags`             |    no    | Bitmask of behavioural flags                          |
-| `errmsg`  | `char[ARGON_ERRMSG_LEN]` |   out    | Buffer populated with a diagnostic on error           |
+| `flags`   | `ArgonFlags`             |    no    | Bitmask of behavioural flags                                         |
+| `errmsg`  | `char[ARGON_ERRMSG_LEN]` |   out    | Buffer populated with a diagnostic on error                          |
 
 The `options` array holds the global options. Each scope — global and per-subcommand — may contain up to `ARGON_OPTION_MAX_COUNT` options; up to `ARGON_SUBCOMMAND_MAX_COUNT` subcommands may be defined. Entries beyond these limits are silently ignored. A single parser context thus supports at most `ARGON_OPTION_MAX_COUNT` $\times$ `ARGON_SUBCOMMAND_MAX_COUNT` options, which is sufficient for most use cases.
 
@@ -56,11 +56,11 @@ See also:
 
 Describes one subcommand.
 
-| Field     | Type            | Description                                                                  |
-| --------- | --------------- | ---------------------------------------------------------------------------- |
-| `name`    | `const char *`  | Subcommand name (e.g. `"build"`)                                             |
-| `alias`   | `char`          | Short alias (e.g. `'b'`); `'\0'` for none                                    |
-| `desc`    | `const char *`  | Human-readable description for help output                                   |
+| Field     | Type            | Description                                                                                    |
+| --------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| `name`    | `const char *`  | Subcommand name (e.g. `"build"`)                                                               |
+| `alias`   | `char`          | Short alias (e.g. `'b'`); `'\0'` for none                                                      |
+| `desc`    | `const char *`  | Human-readable description for help output                                                     |
 | `options` | `ArgonOption *` | `ARGON_OPTION_SENTINEL`-terminated option array; may point to the same array as global options |
 
 The subcommand array must be `ARGON_SUB_SENTINEL`-terminated as a sentinel.
@@ -171,7 +171,7 @@ On failure, `ctx->errmsg` receives a diagnostic.
 
 ### `ARGON_ARGV(...)`
 
-Constructs a `NULL`-terminated `char *[]` on the stack from variadic arguments. `argv[0]` is automatically set to `""` (ignored by the parser).
+Constructs a `NULL`-terminated `char *[]` on the stack from variadic arguments. `argv[0]` is automatically set to `""` (ignored by the parser). Controlled by `ARGON_PEDANTIC`.
 
 ```c
 char *argv[] = ARGON_ARGV("--format", "jpg");
@@ -222,15 +222,17 @@ Return `true` if the option's target was written to during parsing (i.e., the us
 
 ## Constants
 
-| Name                         | Configurable | Description                               |
-| ---------------------------- | :----------: | ----------------------------------------- |
-| `ARGON_VERSION_MAJOR`        |      —       | Major version number                      |
-| `ARGON_VERSION_MINOR`        |      —       | Minor version number                      |
-| `ARGON_VERSION_PATCH`        |      —       | Patch version number                      |
-| `ARGON_ERRMSG_LEN`           |      ✓       | Error message buffer length               |
-| `ARGON_OPTNAME_MAX_LEN`      |      ✓       | Maximum long option name length           |
-| `ARGON_ENUM_MAX_LEN`         |      ✓       | Maximum enum string length                |
-| `ARGON_ENUM_MAX_COUNT`       |      —       | Maximum number of enum values per option  |
-| `ARGON_ARRAY_MAX_LEN`        |      —       | Maximum number of array values per option |
-| `ARGON_OPTION_MAX_COUNT`     |      —       | Maximum number of options per option set  |
-| `ARGON_SUBCOMMAND_MAX_COUNT` |      —       | Maximum number of subcommands             |
+| Name                         | Configurable | Description                                                                                                 |
+| ---------------------------- | :----------: | ----------------------------------------------------------------------------------------------------------- |
+| `ARGON_IMPLS`                |      ✓       | Define to include the library implementation; exactly one source file per translation unit should define it |
+| `ARGON_PEDANTIC`             |      ✓       | Disables all non-strictly-conforming C features                                                             |
+| `ARGON_VERSION_MAJOR`        |      —       | Major version number                                                                                        |
+| `ARGON_VERSION_MINOR`        |      —       | Minor version number                                                                                        |
+| `ARGON_VERSION_PATCH`        |      —       | Patch version number                                                                                        |
+| `ARGON_ERRMSG_LEN`           |      ✓       | Error message buffer length                                                                                 |
+| `ARGON_OPTNAME_MAX_LEN`      |      ✓       | Maximum long option name length                                                                             |
+| `ARGON_ENUM_MAX_LEN`         |      ✓       | Maximum enum string length                                                                                  |
+| `ARGON_ENUM_MAX_COUNT`       |      —       | Maximum number of enum values per option                                                                    |
+| `ARGON_ARRAY_MAX_LEN`        |      —       | Maximum number of array values per option                                                                   |
+| `ARGON_OPTION_MAX_COUNT`     |      —       | Maximum number of options per option set                                                                    |
+| `ARGON_SUBCOMMAND_MAX_COUNT` |      —       | Maximum number of subcommands                                                                               |
