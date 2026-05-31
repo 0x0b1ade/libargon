@@ -18,7 +18,7 @@ test_int_parse(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "42"));
@@ -38,7 +38,7 @@ test_float_parse(void)
             .type     = ARGON_OPTYPE_FLOAT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--scale", "0.6875"));
@@ -58,7 +58,7 @@ test_string_parse(void)
             .type     = ARGON_OPTYPE_STRREF,
             .target   = (void *) &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--output", "file.txt"));
@@ -79,7 +79,7 @@ test_short_alias(void)
             .type     = ARGON_OPTYPE_STRREF,
             .target   = (void *) &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("-o", "out.bin"));
@@ -99,7 +99,7 @@ test_negative_int(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "-1"));

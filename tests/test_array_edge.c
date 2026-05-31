@@ -24,11 +24,10 @@ test_array_type_mismatch_to_positional(void)
             .type     = ARGON_OPTYPE_FLOAT,
             .target   = &pos,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--ints", "10", "20", "3.4"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--ints", "10", "20", "3.4"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(arr[0] == 10 && arr[1] == 20 && arr[2] == 0, "array values wrong");
     ASSERT(pos == 3.4, "positional should get 3.4");
@@ -47,7 +46,7 @@ test_array_force_type_mismatch_error(void)
             .target       = &arr,
             .array_plugin = {.max_len = 3, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--ints", "10", "3.4"));
@@ -74,11 +73,10 @@ test_array_overflow_to_positional(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &pos,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--coords", "10", "20", "30"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--coords", "10", "20", "30"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(arr[0] == 10 && arr[1] == 20, "array values wrong");
     ASSERT(pos == 30, "positional should get overflow");
@@ -104,10 +102,10 @@ test_array_both_incompatible(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &pos,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r = argon_parse(&argon, ARGON_ARGV("--ints", "10", "hello"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--ints", "10", "hello"));
     ASSERT(r == ARGON_ERR_INVALID_VALUE, "should fail");
     PASS();
 }

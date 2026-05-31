@@ -19,7 +19,7 @@ test_positional_int(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("42"));
@@ -40,7 +40,7 @@ test_positional_string(void)
             .type     = ARGON_OPTYPE_STRREF,
             .target   = (void *) &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("input.txt"));
@@ -61,7 +61,7 @@ test_positional_optional_missing(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV(NULL));
@@ -84,7 +84,7 @@ test_positional_after_ddash(void)
             .type     = ARGON_OPTYPE_STRREF,
             .target   = (void *) &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r = argon_parse(&argon, ARGON_ARGV("--", "--not-an-option"));
@@ -109,7 +109,7 @@ test_positional_mixed(void)
          .alias    = 'v',
          .type     = ARGON_OPTYPE_BOOL,
          .target   = &flag},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r = argon_parse(&argon, ARGON_ARGV("file.txt", "--verbose"));
@@ -127,7 +127,7 @@ test_positional_multi(void)
     ArgonOption opts[] = {
         {.fullname = NULL, .alias = 0, .type = ARGON_OPTYPE_INT, .target = &a},
         {.fullname = NULL, .alias = 0, .type = ARGON_OPTYPE_INT, .target = &b},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("10", "20"));
@@ -147,7 +147,7 @@ test_positional_unexpected(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &flag,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("stray"));

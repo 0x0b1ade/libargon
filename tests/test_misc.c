@@ -16,7 +16,7 @@ test_double_dash(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--", "--count", "42"));
@@ -38,7 +38,7 @@ test_print_table(void)
             .desc     = "Enable verbose output.",
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_print_table(&argon, stdout);

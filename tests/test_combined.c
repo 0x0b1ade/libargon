@@ -31,7 +31,7 @@ test_combined_short(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &c,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon argon = {
         .options = opts,
@@ -68,7 +68,7 @@ test_combined_short_value(void)
             .type     = ARGON_OPTYPE_STRREF,
             .target   = (void *) &output,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon argon = {
         .options = opts,
@@ -106,7 +106,7 @@ test_combined_short_bad_middle(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &b,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon argon = {
         .options = opts,
@@ -143,7 +143,7 @@ test_combined_short_array_last(void)
             .target       = &vals,
             .array_plugin = {.max_len = 2, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon argon = {
         .options = opts,
@@ -181,7 +181,7 @@ test_combined_short_value_int(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &c,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon argon = {
         .options = opts,
@@ -221,7 +221,7 @@ test_combined_short_value_enum(void)
             .target      = (void *) &f,
             .enum_plugin = {.enums = enums, .case_sensitive = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon argon = {
         .options = opts,

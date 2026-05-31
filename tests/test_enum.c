@@ -20,7 +20,7 @@ test_enum_pass(void)
             .target      = (void *) &val,
             .enum_plugin = {.enums = enums, .case_sensitive = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--format", "png"));
@@ -42,7 +42,7 @@ test_enum_fail(void)
             .target      = (void *) &val,
             .enum_plugin = {.enums = enums, .case_sensitive = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--format", "gif"));
@@ -63,7 +63,7 @@ test_enum_case_insensitive(void)
             .target      = (void *) &val,
             .enum_plugin = {.enums = enums, .case_sensitive = false},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--format", "PNG"));
@@ -86,7 +86,7 @@ test_enum_array_pass(void)
             .enum_plugin  = {.enums = enums, .case_sensitive = true},
             .array_plugin = {.max_len = 3, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r =
@@ -112,7 +112,7 @@ test_enum_array_fail(void)
             .enum_plugin  = {.enums = enums, .case_sensitive = true},
             .array_plugin = {.max_len = 3, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r =

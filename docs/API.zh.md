@@ -11,8 +11,8 @@
 
 | 字段      | 类型                     |  必填  | 说明                                  |
 | --------- | ------------------------ | :----: | ------------------------------------- |
-| `options` | `ArgonOption *`          | **是** | `{0}` 终止的全局选项数组              |
-| `subs`    | `ArgonSub *`             |   否   | `{0}` 终止的子程序数组；无则为 `NULL` |
+| `options` | `ArgonOption *`          | **是** | `ARGON_OPTION_SENTINEL` 终止的全局选项数组              |
+| `subs`    | `ArgonSub *`             |   否   | `ARGON_SUB_SENTINEL` 终止的子程序数组；无则为 `NULL` |
 | `flags`   | `ArgonFlags`             |   否   | 行为标志位掩码                        |
 | `errmsg`  | `char[ARGON_ERRMSG_LEN]` |  出参  | 发生错误时填入诊断信息                |
 
@@ -42,7 +42,7 @@
 | `enum_plugin`  | `ArgonEnumPlugin`  |   否   | 枚举校验（仅对 `STRREF` 类型有效）                   |
 | `array_plugin` | `ArgonArrayPlugin` |   否   | 多值收集（设置 `max_len` > 0）                       |
 
-选项数组必须以 `{0}` 终止作为哨兵。
+选项数组必须以 `ARGON_OPTION_SENTINEL` 终止作为哨兵。
 
 另见：
 
@@ -61,9 +61,9 @@
 | `name`    | `const char *`  | 子程序名（如 `"build"`）                               |
 | `alias`   | `char`          | 短别名（如 `'b'`）；无则 `'\0'`                        |
 | `desc`    | `const char *`  | 帮助输出中的人类可读描述                               |
-| `options` | `ArgonOption *` | `{0}` 终止的选项数组；可直接指向全局选项数组以实现共享 |
+| `options` | `ArgonOption *` | `ARGON_OPTION_SENTINEL` 终止的选项数组；可直接指向全局选项数组以实现共享 |
 
-子程序数组必须以 `{0}` 终止作为哨兵。
+子程序数组必须以 `ARGON_SUB_SENTINEL` 终止作为哨兵。
 
 另见：
 

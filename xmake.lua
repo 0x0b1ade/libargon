@@ -1,7 +1,7 @@
 set_project("argon")
 add_rules("mode.debug", "mode.release")
 set_languages("c11")
-set_warnings("all")
+set_warnings("allextra", "error")
 set_encodings("utf-8")
 add_includedirs(".")
 

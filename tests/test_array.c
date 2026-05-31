@@ -19,7 +19,7 @@ test_int_array(void)
             .target       = &arr,
             .array_plugin = {.max_len = 3, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r =
@@ -41,7 +41,7 @@ test_float_array(void)
             .target       = &arr,
             .array_plugin = {.max_len = 2, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r = argon_parse(&argon, ARGON_ARGV("--scales", "0.5", "1.5"));
@@ -62,7 +62,7 @@ test_bool_array(void)
             .target       = &arr,
             .array_plugin = {.max_len = 3, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r =
@@ -85,7 +85,7 @@ test_string_array(void)
             .target       = &arr,
             .array_plugin = {.max_len = 2, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r =
@@ -108,7 +108,7 @@ test_array_optional(void)
             .target       = &arr,
             .array_plugin = {.max_len = 3, .force_filling = false},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--coords", "10", "20"));
@@ -130,7 +130,7 @@ test_array_empty_no_flag(void)
             .target       = &arr,
             .array_plugin = {.max_len = 2, .force_filling = false},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--coords"));

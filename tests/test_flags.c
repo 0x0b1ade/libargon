@@ -16,7 +16,7 @@ test_optional_provided(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "42"));
@@ -38,7 +38,7 @@ test_optional_not_provided(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV(NULL));
@@ -61,7 +61,7 @@ test_written_flag_array(void)
             .target       = &arr,
             .array_plugin = {.max_len = 2, .force_filling = true},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--coords", "10", "20"));
@@ -83,7 +83,7 @@ test_is_parsed(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "42"));

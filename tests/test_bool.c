@@ -16,7 +16,7 @@ test_bool_parse(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--flag"));
@@ -36,7 +36,7 @@ test_bool_explicit(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--flag", "false"));
@@ -56,7 +56,7 @@ test_written_flag_bool_toggle(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--verbose"));

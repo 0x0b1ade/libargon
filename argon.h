@@ -11,12 +11,18 @@
 
 #define ARGON_VERSION_MAJOR 1
 #define ARGON_VERSION_MINOR 0
-#define ARGON_VERSION_PATCH 0
+#define ARGON_VERSION_PATCH 2
 
 // User-defined
-#define ARGON_ERRMSG_LEN      256
-#define ARGON_OPTNAME_MAX_LEN 64
-#define ARGON_ENUM_MAX_LEN    64
+#ifndef ARGON_ERRMSG_LEN
+    #define ARGON_ERRMSG_LEN 256
+#endif
+#ifndef ARGON_OPTNAME_MAX_LEN
+    #define ARGON_OPTNAME_MAX_LEN 64
+#endif
+#ifndef ARGON_ENUM_MAX_LEN
+    #define ARGON_ENUM_MAX_LEN 64
+#endif
 
 typedef uint8_t ArgonFlags;
 #define ARGON_COMBINED_MATCHING   (1u << 0)
@@ -147,6 +153,11 @@ typedef struct
     ArgonOptFlags flags_;
 } ArgonOption;
 
+#define ARGON_OPTION_SENTINEL {0}
+
+#define argon_option_is_pos_(opt)      (!(opt).fullname && !(opt).alias)
+#define argon_option_is_sentinel_(opt) (!(opt).target)
+
 typedef uint8_t ArgonOptCnt;
 #define ARGON_OPTION_MAX_COUNT     255
 #define ARGON_SUBCOMMAND_MAX_COUNT 64
@@ -158,7 +169,7 @@ typedef uint8_t ArgonOptCnt;
  * - `name`    subcommand name (e.g. `"build"`)
  * - `alias`   single-char short name (e.g. `'b'`), `0` for none
  * - `desc`    human-readable description for help output
- * - `options` {0}-terminated array of `ArgonOption` definitions.
+ * - `options` `ARGON_OPTION_SENTINEL`-terminated array of `ArgonOption` definitions.
  *             May point to the same array as the global options for sharing
  */
 typedef struct
@@ -169,12 +180,17 @@ typedef struct
     ArgonOption *options;
 } ArgonSub;
 
+#define ARGON_SUB_SENTINEL {0}
+
+#define argon_sub_is_sentinel_(sub) (!(sub).name)
+
 /**
  * @brief Parser Context
  *
  * Holds option definitions and parser state.
- * - `options`     [required] {0}-terminated array of global `ArgonOption`
- * - `subcommands` [optional] {0}-terminated array of `ArgonSub`
+ * - `options`     [required] `ARGON_OPTION_SENTINEL`-terminated array of global
+ * `ArgonOption`
+ * - `subcommands` [optional] `ARGON_SUB_SENTINEL`-terminated array of `ArgonSub`
  * - `flags`       [optional] bitmask of `ArgonFlags`
  * - `errmsg`      [out]      buffer populated with a diagnostic message on
  *                            error
@@ -213,7 +229,9 @@ typedef struct
     #define ARGON_FORMAT_STRING_
 #endif
 
-#define ARGON_ARGV(...) ((char *[]) {"", ##__VA_ARGS__, NULL})
+#ifndef ARGON_PEDANTIC
+    #define ARGON_ARGV(...) ((char *[]) {"", ##__VA_ARGS__, NULL})
+#endif
 
 /**
  * @brief Parse Command-Line Arguments
@@ -349,7 +367,7 @@ ARGON_FORMAT_FN_(2, 3)
 ARGON_PRIVATE_ void
 argon_set_errmsg_(char *buf, ARGON_FORMAT_STRING_ const char *fmt, ...)
 {
-    va_list args = {0};
+    va_list args; // NOLINT(cppcoreguidelines-init-variables)
     va_start(args, fmt);
     int n = vsnprintf(buf, ARGON_ERRMSG_LEN, fmt, args);
     va_end(args);
@@ -378,9 +396,6 @@ argon_is_option_name_(Argon *ctx, const char *raw)
     }
     return true;
 }
-
-#define argon_option_is_pos_(opt)      (!(opt)->fullname && !(opt)->alias)
-#define argon_option_is_sentinel_(opt) (!(opt)->target)
 
 #pragma endregion
 
@@ -481,21 +496,12 @@ argon_parse_str_mut_(Argon *ctx, char *raw, const ArgonOption *opt, char **targe
     return ARGON_OK;
 }
 
-#define argon_parse_raw_(ctx, raw, opt, target_ref)                                      \
-    _Generic((target_ref),                                                               \
-        bool *: argon_parse_bool_(ctx, raw, opt, (bool *) (target_ref)),                 \
-        int *: argon_parse_int_(ctx, raw, opt, (int *) (target_ref)),                    \
-        double *: argon_parse_float_(ctx, raw, opt, (double *) (target_ref)),            \
-        char **: argon_parse_str_mut_(ctx, raw, opt, (char **) (target_ref)),            \
-        const char **: argon_parse_str_(ctx, raw, opt, (const char **) (target_ref)),    \
-        default: argon_parse_str_(ctx, raw, opt, (const char **) (target_ref)))
-
 #define ARGON_FOR_EACH_OPTION_TYPE_(PROCESSOR)                                           \
-    PROCESSOR(ARGON_OPTYPE_BOOL, bool)                                                   \
-    PROCESSOR(ARGON_OPTYPE_INT, int)                                                     \
-    PROCESSOR(ARGON_OPTYPE_FLOAT, double)                                                \
-    PROCESSOR(ARGON_OPTYPE_STRREF, const char *)                                         \
-    PROCESSOR(ARGON_OPTYPE_STRREF_MUT, char *)
+    PROCESSOR(ARGON_OPTYPE_BOOL, bool, argon_parse_bool_)                                \
+    PROCESSOR(ARGON_OPTYPE_INT, int, argon_parse_int_)                                   \
+    PROCESSOR(ARGON_OPTYPE_FLOAT, double, argon_parse_float_)                            \
+    PROCESSOR(ARGON_OPTYPE_STRREF, const char *, argon_parse_str_)                       \
+    PROCESSOR(ARGON_OPTYPE_STRREF_MUT, char *, argon_parse_str_mut_)
 
 #define argon_write_target_(opt, Type, val)                                              \
     do                                                                                   \
@@ -504,11 +510,11 @@ argon_parse_str_mut_(Argon *ctx, char *raw, const ArgonOption *opt, char **targe
         (opt)->flags_ |= ARGON_OPTFLAG_WRITTEN_;                                         \
     } while (0)
 
-#define ARGON_PROCESS_SINGLE_VALUE_(type_enum, ValueType)                                \
+#define ARGON_PROCESS_SINGLE_VALUE_(type_enum, ValueType, parse_fn)                      \
 case type_enum:                                                                          \
 {                                                                                        \
     ValueType   val = {0};                                                               \
-    ArgonResult r   = argon_parse_raw_(ctx, argv[cur_idx], opt, &val);                   \
+    ArgonResult r   = parse_fn(ctx, argv[cur_idx], opt, &val);                           \
     if (r != ARGON_OK)                                                                   \
     {                                                                                    \
         if (ctx->errmsg[0] == '\0')                                                      \
@@ -520,7 +526,7 @@ case type_enum:                                                                 
     break;                                                                               \
 }
 
-#define ARGON_PROCESS_ARRAY_VALUES_(type_enum, ValueType)                                \
+#define ARGON_PROCESS_ARRAY_VALUES_(type_enum, ValueType, parse_fn)                      \
 case type_enum:                                                                          \
 {                                                                                        \
     ArgonArrLen arr_len = 0;                                                             \
@@ -528,7 +534,7 @@ case type_enum:                                                                 
     {                                                                                    \
         if (arr_len >= max_len) break;                                                   \
         ValueType   val = {0};                                                           \
-        ArgonResult r   = argon_parse_raw_(ctx, argv[cur_idx], opt, &val);               \
+        ArgonResult r   = parse_fn(ctx, argv[cur_idx], opt, &val);                       \
         if (r != ARGON_OK)                                                               \
         {                                                                                \
             if (ctx->errmsg[0] == '\0')                                                  \
@@ -713,7 +719,7 @@ argon_parse(Argon *ctx, char *const argv[])
             short_map[i] = ARGON_OPTION_MAX_COUNT;
 
         ArgonOptCnt n = 0;
-        for (; n < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(&ctx->options[n]);
+        for (; n < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(ctx->options[n]);
              n++)
         {
             ArgonOption *opt = &ctx->options[n];
@@ -728,13 +734,12 @@ argon_parse(Argon *ctx, char *const argv[])
                 }
             }
 
-            if (argon_option_is_pos_(opt))
+            if (argon_option_is_pos_(*opt))
             {
                 if (opt->array_plugin.max_len > 0)
                 {
                     argon_set_errmsg_(ctx->errmsg,
-                                      "positional option %u does not "
-                                      "support array",
+                                      "positional option %u does not support array",
                                       (unsigned) n);
                     return ARGON_ERR_INVALID_VALUE;
                 }
@@ -764,7 +769,7 @@ argon_parse(Argon *ctx, char *const argv[])
                 }
             }
 
-            if (argon_option_is_pos_(opt)) pos_indices[pos_count++] = i;
+            if (argon_option_is_pos_(*opt)) pos_indices[pos_count++] = i;
         }
     }
 
@@ -806,7 +811,7 @@ argon_parse(Argon *ctx, char *const argv[])
 
                     ArgonOptCnt sn = 0;
                     for (; sn < ARGON_OPTION_MAX_COUNT &&
-                           !argon_option_is_sentinel_(&matched->options[sn]);
+                           !argon_option_is_sentinel_(matched->options[sn]);
                          sn++)
                     {
                         ArgonOption *opt = &matched->options[sn];
@@ -824,7 +829,7 @@ argon_parse(Argon *ctx, char *const argv[])
                             }
                         }
 
-                        if (argon_option_is_pos_(opt))
+                        if (argon_option_is_pos_(*opt))
                             sub_pos_indices[sub_pos_count++] = sn;
                     }
 
@@ -891,7 +896,7 @@ argon_parse(Argon *ctx, char *const argv[])
             }
 
             for (ArgonOptCnt j = 0;
-                 j < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(&p_options[j]);
+                 j < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(p_options[j]);
                  j++)
             {
                 ArgonOption *opt = &p_options[j];
@@ -917,7 +922,7 @@ argon_parse(Argon *ctx, char *const argv[])
     return ARGON_OK;
 }
 
-#define argon_size_to_int_(x) (x) > (size_t) INT_MAX ? INT_MAX : (int) x;
+#define argon_size_to_int_(x) (x) > (size_t) INT_MAX ? INT_MAX : (int) (x);
 
 ARGON_PRIVATE_ void
 argon_print_options_(ArgonOption *options, FILE *ostream, const char *prefix)
@@ -927,10 +932,10 @@ argon_print_options_(ArgonOption *options, FILE *ostream, const char *prefix)
     size_t            max_alias = 0, max_full = 0, max_type = 0;
 
     for (ArgonOptCnt i = 0;
-         i < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(&options[i]); i++)
+         i < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(options[i]); i++)
     {
         const ArgonOption *opt = &options[i];
-        if (argon_option_is_pos_(opt)) continue;
+        if (argon_option_is_pos_(*opt)) continue;
 
         if (opt->alias != 0 && max_alias < 3) max_alias = 3;
 
@@ -964,10 +969,10 @@ argon_print_options_(ArgonOption *options, FILE *ostream, const char *prefix)
     int type_w     = argon_size_to_int_(max_type);
 
     for (ArgonOptCnt i = 0;
-         i < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(&options[i]); i++)
+         i < ARGON_OPTION_MAX_COUNT && !argon_option_is_sentinel_(options[i]); i++)
     {
         const ArgonOption *opt = &options[i];
-        if (argon_option_is_pos_(opt)) continue;
+        if (argon_option_is_pos_(*opt)) continue;
 
         char alias_buf[16] = {0};
         if (opt->alias != 0)
@@ -1023,7 +1028,7 @@ argon_print_table(Argon *ctx, FILE *ostream)
     (void) fprintf(ostream, "Options:\n");
     argon_print_options_(ctx->options, ostream, "");
 
-    if (ctx->subs && ctx->subs[0].name)
+    if (ctx->subs && !argon_sub_is_sentinel_(ctx->subs[0]))
     {
         size_t max_name  = 0;
         bool   any_alias = false;

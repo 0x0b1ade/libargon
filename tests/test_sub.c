@@ -28,7 +28,7 @@ test_sub_global_and_sub(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &jobs,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
 
     ArgonOption global_opts[] = {
@@ -36,12 +36,12 @@ test_sub_global_and_sub(void)
          .alias    = 'd',
          .type     = ARGON_OPTYPE_BOOL,
          .target   = &debug},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
 
     ArgonSub subs[] = {
         {.name = "build", .alias = 'b', .options = build_opts},
-        {0},
+        ARGON_SUB_SENTINEL,
     };
 
     Argon argon = {
@@ -70,7 +70,7 @@ test_sub_alias_match(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &force,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonOption global_opts[] = {
         {
@@ -79,10 +79,10 @@ test_sub_alias_match(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = NULL,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonSub subs[] = {{.name = "build", .alias = 'b', .options = build_opts},
-                       {0}};
+                       ARGON_SUB_SENTINEL};
 
     Argon       argon = {.options = global_opts, .subs = subs};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("b", "-r"));
@@ -103,9 +103,9 @@ test_sub_unknown(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = NULL,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub    subs[] = {{.name = "build", .options = &(ArgonOption){0}}, {0}};
+    ArgonSub    subs[] = {{.name = "build", .options = &(ArgonOption){0}}, ARGON_SUB_SENTINEL};
     Argon       argon  = {.options = global_opts, .subs = subs};
     ArgonResult r      = argon_parse(&argon, ARGON_ARGV("bad"));
     ASSERT(r == ARGON_ERR_UNKNOWN_SUB, "should be unknown subcommand");
@@ -123,12 +123,12 @@ test_sub_case_insensitive(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = NULL,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub subs[] = {{.name = "build", .options = &(ArgonOption){0}}, {0}};
+    ArgonSub subs[] = {{.name = "build", .options = &(ArgonOption){0}}, ARGON_SUB_SENTINEL};
     Argon    argon  = {
         .options = global_opts,
-        .subs    = subs,
+        .subs   = subs,
         .flags   = ARGON_CASE_INSENSITIVE,
     };
     ArgonResult r = argon_parse(&argon, ARGON_ARGV("BUILD"));
@@ -149,16 +149,16 @@ test_sub_global_after_sub_not_recognized(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = NULL,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonOption global_opts[] = {
         {.fullname = "debug",
          .alias    = 'd',
          .type     = ARGON_OPTYPE_BOOL,
          .target   = &debug},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, {0}};
+    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, ARGON_SUB_SENTINEL};
     Argon       argon  = {.options = global_opts, .subs = subs};
     ArgonResult r      = argon_parse(&argon, ARGON_ARGV("build", "-d"));
     ASSERT(r == ARGON_ERR_UNKNOWN_OPTION, "should reject -d after subcommand");
@@ -182,7 +182,7 @@ test_sub_positional_args(void)
         },
         {.type = ARGON_OPTYPE_STRREF, .target = (void *) &input},
         {.type = ARGON_OPTYPE_STRREF, .target = (void *) &output},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonOption global_opts[] = {
         {
@@ -191,9 +191,9 @@ test_sub_positional_args(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &(bool){0},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, {0}};
+    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, ARGON_SUB_SENTINEL};
     Argon       argon  = {.options = global_opts, .subs = subs};
     ArgonResult r =
         argon_parse(&argon, ARGON_ARGV("build", "in.txt", "out.txt"));
@@ -209,7 +209,7 @@ test_sub_excess_positional(void)
     TEST("excess positional in subcommand");
     ArgonOption build_opts[] = {
         {.type = ARGON_OPTYPE_STRREF, .target = (void *) &(const char *){NULL}},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonOption global_opts[] = {
         {
@@ -218,9 +218,9 @@ test_sub_excess_positional(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &(bool){0},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, {0}};
+    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, ARGON_SUB_SENTINEL};
     Argon       argon  = {.options = global_opts, .subs = subs};
     ArgonResult r = argon_parse(&argon, ARGON_ARGV("build", "a.txt", "b.txt"));
     ASSERT(r == ARGON_ERR_UNKNOWN_OPTION, "should error on excess positional");
@@ -242,7 +242,7 @@ test_sub_double_dash(void)
             .target   = (void *) &opt,
         },
         {.type = ARGON_OPTYPE_STRREF, .target = (void *) &input},
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonOption global_opts[] = {
         {
@@ -251,9 +251,9 @@ test_sub_double_dash(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &(bool){0},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, {0}};
+    ArgonSub    subs[] = {{.name = "build", .options = build_opts}, ARGON_SUB_SENTINEL};
     Argon       argon  = {.options = global_opts, .subs = subs};
     ArgonResult r =
         argon_parse(&argon, ARGON_ARGV("build", "-o", "x", "--", "input.txt"));
@@ -275,9 +275,9 @@ test_sub_value_not_misinterpreted(void)
             .type     = ARGON_OPTYPE_STRREF,
             .target   = (void *) &target,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
-    ArgonSub    subs[] = {{.name = "build", .options = &(ArgonOption){0}}, {0}};
+    ArgonSub    subs[] = {{.name = "build", .options = &(ArgonOption){0}}, ARGON_SUB_SENTINEL};
     Argon       argon  = {.options = value_opts, .subs = subs};
     ArgonResult r      = argon_parse(&argon, ARGON_ARGV("-t", "build"));
     ASSERT(r == ARGON_OK, "parse failed");
@@ -298,7 +298,7 @@ test_sub_print_table(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &(bool){0},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonOption build_opts[] = {
         {
@@ -307,11 +307,11 @@ test_sub_print_table(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &(bool){0},
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     ArgonSub subs[] = {
         {.name = "build", .alias = 'b', .desc = "Build", .options = build_opts},
-        {0},
+        ARGON_SUB_SENTINEL,
     };
     Argon argon = {.options = global_opts, .subs = subs};
     argon_print_table(&argon, stdout);

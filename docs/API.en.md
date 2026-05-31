@@ -11,8 +11,8 @@ Parser context holding all option definitions and parser state.
 
 | Field     | Type                     | Required | Description                                           |
 | --------- | ------------------------ | :------: | ----------------------------------------------------- |
-| `options` | `ArgonOption *`          | **yes**  | `{0}`-terminated array of global options              |
-| `subs`    | `ArgonSub *`             |    no    | `{0}`-terminated array of subcommands; `NULL` if none |
+| `options` | `ArgonOption *`          | **yes**  | `ARGON_OPTION_SENTINEL`-terminated array of global options              |
+| `subs`    | `ArgonSub *`             |    no    | `ARGON_SUB_SENTINEL`-terminated array of subcommands; `NULL` if none |
 | `flags`   | `ArgonFlags`             |    no    | Bitmask of behavioural flags                          |
 | `errmsg`  | `char[ARGON_ERRMSG_LEN]` |   out    | Buffer populated with a diagnostic on error           |
 
@@ -42,7 +42,7 @@ Describes one command-line option. If both `fullname` and `alias` are zero, the 
 | `enum_plugin`  | `ArgonEnumPlugin`  |    no    | Enum validation (valid for `STRREF` types)                  |
 | `array_plugin` | `ArgonArrayPlugin` |    no    | Multi-value collection (set `max_len` > 0)                  |
 
-The option array must be `{0}`-terminated as a sentinel.
+The option array must be `ARGON_OPTION_SENTINEL`-terminated as a sentinel.
 
 See also:
 
@@ -61,9 +61,9 @@ Describes one subcommand.
 | `name`    | `const char *`  | Subcommand name (e.g. `"build"`)                                             |
 | `alias`   | `char`          | Short alias (e.g. `'b'`); `'\0'` for none                                    |
 | `desc`    | `const char *`  | Human-readable description for help output                                   |
-| `options` | `ArgonOption *` | `{0}`-terminated option array; may point to the same array as global options |
+| `options` | `ArgonOption *` | `ARGON_OPTION_SENTINEL`-terminated option array; may point to the same array as global options |
 
-The subcommand array must be `{0}`-terminated as a sentinel.
+The subcommand array must be `ARGON_SUB_SENTINEL`-terminated as a sentinel.
 
 See also:
 

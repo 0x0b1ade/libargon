@@ -18,7 +18,7 @@ test_unknown_option(void)
             .type     = ARGON_OPTYPE_BOOL,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--unknown"));
@@ -38,7 +38,7 @@ test_missing_value(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count"));
@@ -58,7 +58,7 @@ test_invalid_value(void)
             .type     = ARGON_OPTYPE_INT,
             .target   = &val,
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
     ArgonResult r = argon_parse(&argon, ARGON_ARGV("--count", "notanumber"));

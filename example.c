@@ -47,7 +47,7 @@ main(int argc, char *argv[])
             .target = (void *) &resize_output,
             .desc   = "output file",
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
 
     // Convert subcommand options
@@ -100,7 +100,7 @@ main(int argc, char *argv[])
             .target = (void *) &conv_output,
             .desc   = "output file",
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
 
     // Info subcommand options
@@ -120,7 +120,7 @@ main(int argc, char *argv[])
             .target = (void *) &info_input,
             .desc   = "input file",
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
 
     // Global option array
@@ -132,7 +132,7 @@ main(int argc, char *argv[])
             .target   = &help,
             .desc     = "Show help",
         },
-        {0},
+        ARGON_OPTION_SENTINEL,
     };
 
     static const char SUB_CONVERT[] = "convert", SUB_RESIZE[] = "resize",
@@ -157,7 +157,7 @@ main(int argc, char *argv[])
             .desc    = "Show image information",
             .options = info_opts,
         },
-        {0},
+        ARGON_SUB_SENTINEL,
     };
 
     Argon argon = {
