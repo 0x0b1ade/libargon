@@ -61,7 +61,7 @@ test_invalid_value(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r = argon_parse(&argon, ARGON_ARGV("--count", "notanumber"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "notanumber"));
     ASSERT(r == ARGON_ERR_INVALID_VALUE, "should fail with INVALID_VALUE");
     PASS();
 }

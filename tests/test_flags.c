@@ -22,8 +22,7 @@ test_optional_provided(void)
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "42"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(val == 42, "value not written");
-    ASSERT((opts[0].flags_ & ARGON_OPTFLAG_WRITTEN_) != 0,
-           "written flag not set");
+    ASSERT((opts[0].flags_ & ARGON_OPTFLAG_WRITTEN_) != 0, "written flag not set");
     PASS();
 }
 
@@ -88,8 +87,7 @@ test_is_parsed(void)
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--count", "42"));
     ASSERT(r == ARGON_OK, "parse failed");
-    ASSERT(argon_option_is_parsed(&opts[0]),
-           "should return true after parsing");
+    ASSERT(argon_option_is_parsed(&opts[0]), "should return true after parsing");
     PASS();
 }
 

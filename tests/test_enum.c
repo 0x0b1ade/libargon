@@ -89,8 +89,7 @@ test_enum_array_pass(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--formats", "png", "jpg", "bmp"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--formats", "png", "jpg", "bmp"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(strcmp(vals[0], "png") == 0, "vals[0] wrong");
     ASSERT(strcmp(vals[1], "jpg") == 0, "vals[1] wrong");
@@ -115,10 +114,8 @@ test_enum_array_fail(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--formats", "png", "gif", "bmp"));
-    ASSERT(r == ARGON_ERR_INVALID_VALUE,
-           "should fail with INVALID_VALUE on 'gif'");
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--formats", "png", "gif", "bmp"));
+    ASSERT(r == ARGON_ERR_INVALID_VALUE, "should fail with INVALID_VALUE on 'gif'");
     PASS();
 }
 

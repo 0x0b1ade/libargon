@@ -87,10 +87,9 @@ test_positional_after_ddash(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r = argon_parse(&argon, ARGON_ARGV("--", "--not-an-option"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--", "--not-an-option"));
     ASSERT(r == ARGON_OK, "parse failed");
-    ASSERT(val && strcmp(val, "--not-an-option") == 0,
-           "should capture after --");
+    ASSERT(val && strcmp(val, "--not-an-option") == 0, "should capture after --");
     PASS();
 }
 
@@ -105,14 +104,11 @@ test_positional_mixed(void)
          .alias    = 0,
          .type     = ARGON_OPTYPE_STRREF,
          .target   = (void *) &input},
-        {.fullname = "verbose",
-         .alias    = 'v',
-         .type     = ARGON_OPTYPE_BOOL,
-         .target   = &flag},
+        {.fullname = "verbose", .alias = 'v', .type = ARGON_OPTYPE_BOOL, .target = &flag},
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r = argon_parse(&argon, ARGON_ARGV("file.txt", "--verbose"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("file.txt", "--verbose"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(input && strcmp(input, "file.txt") == 0, "positional value wrong");
     ASSERT(flag == true, "named flag not set");

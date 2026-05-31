@@ -22,8 +22,7 @@ test_int_array(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--coords", "10", "20", "30"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--coords", "10", "20", "30"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(arr[0] == 10 && arr[1] == 20 && arr[2] == 30, "array values wrong");
     PASS();
@@ -44,7 +43,7 @@ test_float_array(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r = argon_parse(&argon, ARGON_ARGV("--scales", "0.5", "1.5"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--scales", "0.5", "1.5"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(arr[0] == 0.5 && arr[1] == 1.5, "float array values wrong");
     PASS();
@@ -65,8 +64,7 @@ test_bool_array(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--flags", "true", "false", "1"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--flags", "true", "false", "1"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(arr[0] == true && arr[1] == false && arr[2] == true,
            "bool array values wrong");
@@ -88,8 +86,7 @@ test_string_array(void)
         ARGON_OPTION_SENTINEL,
     };
     Argon       argon = {.options = opts};
-    ArgonResult r =
-        argon_parse(&argon, ARGON_ARGV("--inputs", "a.txt", "b.txt"));
+    ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--inputs", "a.txt", "b.txt"));
     ASSERT(r == ARGON_OK, "parse failed");
     ASSERT(strcmp(arr[0], "a.txt") == 0 && strcmp(arr[1], "b.txt") == 0,
            "string array values wrong");
@@ -113,8 +110,7 @@ test_array_optional(void)
     Argon       argon = {.options = opts};
     ArgonResult r     = argon_parse(&argon, ARGON_ARGV("--coords", "10", "20"));
     ASSERT(r == ARGON_OK, "parse failed");
-    ASSERT(arr[0] == 10 && arr[1] == 20 && arr[2] == -1,
-           "optional array values wrong");
+    ASSERT(arr[0] == 10 && arr[1] == 20 && arr[2] == -1, "optional array values wrong");
     PASS();
 }
 
