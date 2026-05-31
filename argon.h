@@ -43,8 +43,6 @@ typedef uint8_t ArgonFlags;
     #define ARGON_API_
 #endif
 
-#define ARGON_PRIVATE_ static inline
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -155,9 +153,6 @@ typedef struct
 
 #define ARGON_OPTION_SENTINEL {0}
 
-#define argon_option_is_pos_(opt)      (!(opt).fullname && !(opt).alias)
-#define argon_option_is_sentinel_(opt) (!(opt).target)
-
 typedef uint8_t ArgonOptCnt;
 #define ARGON_OPTION_MAX_COUNT     255
 #define ARGON_SUBCOMMAND_MAX_COUNT 64
@@ -181,8 +176,6 @@ typedef struct
 } ArgonSub;
 
 #define ARGON_SUB_SENTINEL {0}
-
-#define argon_sub_is_sentinel_(sub) (!(sub).name)
 
 /**
  * @brief Parser Context
@@ -215,18 +208,6 @@ typedef struct
     #define ARGON_NODISCARD_ _Check_return_
 #else
     #define ARGON_NODISCARD_
-#endif
-
-#if defined(__GNUC__) || defined(__clang__)
-    #define ARGON_FORMAT_FN_(fmt_idx, va_idx)                                            \
-        __attribute__((format(printf, fmt_idx, va_idx)))
-    #define ARGON_FORMAT_STRING_
-#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
-    #define ARGON_FORMAT_FN_(fmt_idx, va_idx)
-    #define ARGON_FORMAT_STRING_ _Printf_format_string_
-#else
-    #define ARGON_FORMAT_FN_(fmt_idx, va_idx)
-    #define ARGON_FORMAT_STRING_
 #endif
 
 #ifndef ARGON_PEDANTIC
@@ -303,7 +284,26 @@ ARGON_API_ ArgonResult argon_print_sub_table(const ArgonSub *ctx, FILE *ostream)
 #include <stdlib.h>
 #include <string.h>
 
+#define ARGON_PRIVATE_ static inline
+
 #define ARGON_ARRAYLEN_(a) (sizeof(a) / sizeof(*(a)))
+
+#if defined(__GNUC__) || defined(__clang__)
+    #define ARGON_FORMAT_FN_(fmt_idx, va_idx)                                            \
+        __attribute__((format(printf, fmt_idx, va_idx)))
+    #define ARGON_FORMAT_STRING_
+#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
+    #define ARGON_FORMAT_FN_(fmt_idx, va_idx)
+    #define ARGON_FORMAT_STRING_ _Printf_format_string_
+#else
+    #define ARGON_FORMAT_FN_(fmt_idx, va_idx)
+    #define ARGON_FORMAT_STRING_
+#endif
+
+#define argon_option_is_pos_(opt)      (!(opt).fullname && !(opt).alias)
+#define argon_option_is_sentinel_(opt) (!(opt).target)
+
+#define argon_sub_is_sentinel_(sub) (!(sub).name)
 
 #pragma region String utilities
 
