@@ -276,6 +276,11 @@ ARGON_API_ ArgonResult argon_print_sub_table(const ArgonSub *ctx, FILE *ostream)
 
 #ifdef ARGON_IMPLS
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -1091,5 +1096,9 @@ argon_active_sub(const Argon *ctx)
     if (!ctx) return NULL;
     return ctx->active_;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ARGON_IMPLS
